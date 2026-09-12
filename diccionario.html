@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Diccionario</title>
+    </head>
+    <body>
+        <form id="formularioBuscar">
+            <label for="BuscarPalabra">Palabra:</label>
+            <input type="text" id="BuscarPalabra" name="BuscarPalabra">
+            <button type="submit" id="Buscar">Buscar</button>
+            <p id="resultado"></p>
+        </form>
+        <form id="formularioAgregar">
+            <label for="AgregarPalabra">Palabra:</label>
+            <input type="text" id="AgregarPalabra" name="AgregarPalabra">
+            <label for="AgregarDefinicion">Definición:</label>
+            <input type="text" id="AgregarDefinicion" name="AgregarDefinicion">
+            <button type="submit" id="Agregar">Agregar</button>
+            <p id="resultadoAgregar"></p>
+        </form> 
+        <script>
+            document.getElementById("formularioBuscar").addEventListener("submit", buscarPalabra);
+
+            function buscarPalabra(event) {
+                event.preventDefault();
+                const palabra = document.getElementById("BuscarPalabra").value;
+                fetch('http://localhost/diccionario/diccionario.php')
+                .then(response => response.json())
+                .then(data => {
+                    const resultado = data[palabra];
+                    if (resultado) {
+                        document.getElementById("resultado").innerHTML = resultado;
+                    } else {
+                        document.getElementById("resultado").innerHTML = "Palabra no encontrada";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+            document.getElementById("formularioAgregar").addEventListener("submit",agregarPalabra);
+
+            function agregarPalabra(event){
+                event.preventDefault();
+                const palabra=document.getElementById("AgregarPalabra").value;
+                const definicion=document.getElementById("AgregarDefinicion").value;
+
+                fetch('http://localhost/diccionario/diccionario.php',{
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ palabra: palabra, significado: definicion })
+                })
+                .then(response=>response.json())
+                .then(data=>{
+
+                    if(palabra && definicion){
+                        document.getElementById("resultadoAgregar").innerHTML="Palabra agregada correctamente";
+                    }
+                    else{
+                        document.getElementById("resultadoAgregar").innerHTML="Error";
+                    }
+                })
+                .catch(error=>{
+                    console.error('Error:',error);
+                });
+            }
+            
+        </script>
+    </body>
+</html>
