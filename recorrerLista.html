@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Recorrer Lista</title>
+    </head>
+    <body>
+        <form id="formularioRecorrer">
+            <button type="submit" id="Recorrer">Recorrer Lista</button>
+            <p id="resultadoRecorrer"></p>
+        </form>
+        <script>
+            document.getElementById("formularioRecorrer").addEventListener("submit", recorrerLista);
+
+            function recorrerLista(event) {
+                event.preventDefault();
+                fetch('https://thronesapi.com/api/v2/Characters')
+                .then(response=>response.json())
+                .then(data=>{
+                    for(const clave of data){
+                        document.getElementById("resultadoRecorrer").innerHTML += `${clave.id}:${clave.fullName}<br>`;
+                    }
+                })
+                .catch(error=>{console.log('error:',error);});
+                
+            }
+        </script>
+    </body>
+</html>
