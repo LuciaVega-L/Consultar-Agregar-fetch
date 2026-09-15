@@ -17,7 +17,19 @@
             <input type="number" id="precio" name="precio">
             <button type="submit" id="btnAgregar">agregar</button>
         </form>
+        <form id="guardarVariables">
+            <label id="guardar">guardar variables en el php, ingrese el id</label>
+            <input type="text" id="guardarVariable" name="guardarVariable">
+            <button type="button" id="btnGuardar">guardar</button>
+            <p id="resultadoVariable"></p>
+        </form>
+
+        
         <script>
+
+            /*variable global*/
+            let nombre = "";
+
             document.getElementById("formulario1").addEventListener("submit", mostrarContenido);
             function mostrarContenido(event) {
                 event.preventDefault();
@@ -47,6 +59,22 @@
                     }
                 })
                 .catch(error=>console.log('error:',error));
+            }
+            document.getElementById("btnGuardar").addEventListener("click", guardar);
+            async function guardar(id) {
+
+                id = document.getElementById("guardarVariable").value;
+                try {
+                    const response = await fetch(`http://localhost/productos.php?id=${id}`)
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud');
+                    }
+                    const data = await response.json();
+                    nombre = data.nombre;
+                    document.getElementById("resultadoVariable").innerHTML = `Variable guardada: ${nombre}`;
+                } catch (error) {
+                    console.log('error:', error);
+                }
             }
         </script>
     </body>

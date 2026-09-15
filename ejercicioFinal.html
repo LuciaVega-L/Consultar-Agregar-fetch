@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Ejercicios</title>
+    </head>
+    <body>
+        <button type="button" id="console">console</button>
+        <form id="formRegistrar">
+            <label id="labelRegistro">ingrese los datos para el registro:nomnre, email, edad</label>
+            <input type="text" id="nombreRegistro" name="nombreRegistro">
+            <input type="email" id="emailRegistro" name="emailRegistro">
+            <input type="number" id="edadRegistro" name="edadRegistro">
+            <button type="button" id="btnRegistro">registrar</button>
+        </form>
+        <form id="formBuscar">
+            <label id="labelBuscar">ingrese el id de la persona que buscara</label>
+            <input type="text" id="inputBuscar" name="inputBuscar">
+            <button type="button" id="btnBuscar">buscar</button>
+            <p id="resultadoBuscar"></p>
+        </form>
+        <script>
+            document.getElementById("console").addEventListener("click", consola);
+
+            function consola() {
+                fetch('http://localhost/usuarios.php')
+                .then(response=>response.json())
+                .then(data=>{
+                    console.log(data);
+                })
+                .catch(error=>console.error('error:',error));
+            }
+
+            document.getElementById("btnRegistro").addEventListener("click",registrar);
+            function registrar(){
+                const name=document.getElementById("nombreRegistro").value;
+                const email=document.getElementById("emailRegistro").value;
+                const edad=document.getElementById("edadRegistro").value;
+
+                fetch('http://localhost/usuarios.php',{
+                    method:'POST',
+                    headers:{'Content-type':'application/json'},
+                    body:JSON.stringify({nombre:name,email:email,edad:edad})
+                })
+                .then(response=>{
+                    if(!response.ok){
+                    throw new Error('Error en la solicitud');
+                    }else{
+                    return response.json();
+                    }
+                })
+                .catch(error=>console.error('Error:',error));
+            }
+            document.getElementById("btnBuscar").addEventListener("click",buscar);
+            function buscar(){
+                const id=Number(document.getElementById("inputBuscar").value);
+                fetch(`http://localhost/usuarios.php?id=${id}`)
+                .then(response=>response.json())
+                .then(data=>{
+                    document.getElementById("resultadoBuscar").innerHTML=`${data.nombre},${data.email},${data.edad}`;
+                })
+                .catch(error=>{console.error('error:',error)});
+
+            }
+        </script>
+    </body>
+</html>
