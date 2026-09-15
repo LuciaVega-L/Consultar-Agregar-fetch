@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Ejercicios</title>
+    </head>
+    <body>
+        <h1>Ejercicios</h1>
+        <form id="formulario1">
+            <label id="mostrar">mostrar contenido del php</label>
+            <button type="submit" id="btnMostrar" name="mostrar">mostrar</button>
+            <p id="resultadoMostrar"></p>
+        </form>
+        <form id="formulario2">
+            <label id="agregar">agregar contenido al php</label>
+            <input type="text" id="producto" name="nombre">
+            <input type="number" id="precio" name="precio">
+            <button type="submit" id="btnAgregar">agregar</button>
+        </form>
+        <script>
+            document.getElementById("formulario1").addEventListener("submit", mostrarContenido);
+            function mostrarContenido(event) {
+                event.preventDefault();
+                fetch('http://localhost/productos.php')
+                .then(response=>response.json())
+                .then(data=>{
+                    document.getElementById("resultadoMostrar").innerHTML=JSON.stringify(data);
+                })         
+                .catch(error=>console.log('error:',error));
+            }
+            document.getElementById("formulario2").addEventListener("submit",agregar);
+            function agregar(event){
+                event.preventDefault();
+                fetch('http://localhost/productos.php',{
+                    method:'POST',
+                    headers:{'content-type':'application/json'},
+                    body:JSON.stringify({
+                        nombre:document.getElementById("producto").value,
+                        precio:document.getElementById("precio").value
+                    })
+                })
+                .then(response=>{
+                    if(!response.ok){
+                        throw new Error('Error en la solicitud');
+                    }else{
+                        return response.json();
+                    }
+                })
+                .catch(error=>console.log('error:',error));
+            }
+        </script>
+    </body>
+</html>
